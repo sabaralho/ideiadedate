@@ -32,6 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
 
+    // Truque para permitir digitar a partir do "dia" E abrir a seleção:
+    dateInput.type = 'text';
+    dateInput.placeholder = 'DD/MM/AAAA';
+    
+    dateInput.addEventListener('focus', () => {
+        if (dateInput.type === 'text') {
+            dateInput.type = 'date';
+            dateInput.setAttribute('min', today); // Re-aplica após virar data
+        }
+    });
+
+    dateInput.addEventListener('click', () => {
+        try {
+            dateInput.showPicker(); // Abre o calendário nativo
+        } catch (err) {}
+    });
+    
+    dateInput.addEventListener('blur', () => {
+        if (!dateInput.value) {
+            dateInput.type = 'text';
+        }
+    });
+
     // Função para transição de telas
     function switchScreen(from, to) {
         from.classList.remove('active');
@@ -44,6 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnYes.addEventListener('click', () => {
         switchScreen(screen1, screen2);
         createFloatingHearts();
+        // Esconde o botão não caso ele tenha sido movido para o body
+        btnNo.style.display = 'none';
     });
 
     // Ação do Botão Continuar
@@ -53,12 +78,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Lógica do Botão NÃO fugir
     const moveBtnNo = () => {
-        // Usa fixed para se mover por toda a janela visível
-        const maxX = window.innerWidth - btnNo.offsetWidth - 20;
-        const maxY = window.innerHeight - btnNo.offsetHeight - 20;
+        // Move o botão para o body para evitar que o "transform" do container altere o referencial do fixed
+        if (btnNo.parentNode !== document.body) {
+            document.body.appendChild(btnNo);
+        }
 
-        const randomX = Math.max(10, Math.floor(Math.random() * maxX));
-        const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+        const btnWidth = btnNo.offsetWidth;
+        const btnHeight = btnNo.offsetHeight;
+        
+        // Pega as dimensões reais visíveis da tela
+        const maxX = window.innerWidth - btnWidth - 40;
+        const maxY = window.innerHeight - btnHeight - 40;
+
+        const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+        const randomY = Math.max(20, Math.floor(Math.random() * maxY));
 
         btnNo.style.position = 'fixed';
         btnNo.style.left = `${randomX}px`;

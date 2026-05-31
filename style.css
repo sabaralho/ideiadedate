@@ -160,7 +160,7 @@ label {
     color: var(--text-color);
 }
 
-input[type="date"], select {
+#date-input, select {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid #ddd;
@@ -173,7 +173,7 @@ input[type="date"], select {
     color: #444;
 }
 
-input[type="date"]:focus, select:focus {
+#date-input:focus, select:focus {
     border-color: var(--primary-color);
 }
 
