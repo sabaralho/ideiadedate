@@ -32,21 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
 
-    // Truque para permitir digitar a partir do "dia" E abrir a seleção:
+    // Truque para focar no "dia" e abrir o calendário no PRIMEIRO clique
     dateInput.type = 'text';
     dateInput.placeholder = 'DD/MM/AAAA';
+    
+    const activateDatePicker = (e) => {
+        if (dateInput.type === 'text') {
+            dateInput.type = 'date';
+            dateInput.setAttribute('min', today);
+            dateInput.focus();
+        }
+        // Um pequeno delay garante que o input date foi renderizado
+        setTimeout(() => {
+            try { dateInput.showPicker(); } catch (err) {}
+        }, 50);
+    };
+
+    // Esses eventos previnem que o clique seja perdido na mudança de type
+    dateInput.addEventListener('mousedown', activateDatePicker);
+    dateInput.addEventListener('touchstart', activateDatePicker);
     
     dateInput.addEventListener('focus', () => {
         if (dateInput.type === 'text') {
             dateInput.type = 'date';
-            dateInput.setAttribute('min', today); // Re-aplica após virar data
+            dateInput.setAttribute('min', today);
         }
     });
 
     dateInput.addEventListener('click', () => {
-        try {
-            dateInput.showPicker(); // Abre o calendário nativo
-        } catch (err) {}
+        try { dateInput.showPicker(); } catch (err) {}
     });
     
     dateInput.addEventListener('blur', () => {
